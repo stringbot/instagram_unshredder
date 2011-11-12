@@ -22,15 +22,17 @@ def load_strips(image)
 end
 
 def assemble(strips)
-  _width = strips.length * @strip_width
-  output = create_image(_width, @strip_height, RGB)
+  # _width = strips.length * @strip_width
+  # output = create_image(_width, @strip_height, RGB)
 
-  len = strips.length
-  for i in (0...len)
-    output.set(i*@strip_width, 0, strips[len-i-1].image)
-  end
+  # len = strips.length
+  # for i in (0...len)
+  #   output.set(i*@strip_width, 0, strips[len-i-1].image)
+  # end
 
-  output
+  # output
+
+  Strip.join(strips[0], strips[1]).image
 end
 
 
@@ -52,6 +54,21 @@ class Strip
 
   def initialize(image)
     @image = image
+  end
+
+  def width
+    @image.width
+  end
+
+  def height
+    @image.height
+  end
+
+  def self.join(left_strip, right_strip)
+    new_image = $app.create_image(left_strip.width*2, left_strip.height, RGB)
+    new_image.set(0, 0, left_strip.image)
+    new_image.set(left_strip.width, 0, right_strip.image)
+    Strip.new(new_image)
   end
 end
 
