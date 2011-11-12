@@ -1,92 +1,63 @@
-def setup
-  size(640,359)
-  no_loop
-  @strip_width = 32
-  @strip_height = 359
+require 'strip'
 
-  @img = load_image("TokyoPanoramaShredded.png")
-  @strips = load_strips(@img)
+class UnshredApp < Processing::App
+  include UnshredSupport
+
+  def setup
+
+    size(640,359)
+    no_loop
+    @strip_width = 32
+    @strip_height = 359
+
+    @img = load_image("TokyoPanoramaShredded.png")
+    @strips = load_strips(@img)
+  end
+
+  def draw
+    # assembled = assemble(@strips)
+    # image(assembled, 0, 0)
+
+    strip = @strips[0].join_right(@strips[1])
+    strip = strip.join_left(@strips[2])
+
+    render = strip.image
+    image(render,50,0)
+  end
+
+  def load_strips(image)
+    nstrips = image.width / @strip_width
+    strips = []
+    for i in (0...nstrips)
+      strips << Strip.new(image.get(@strip_width * i, 0, @strip_width, image.height))
+    end
+    strips
+  end
+
+  # returns the assembled image
+  def assemble(strips)
+    _width = strips.length * @strip_width
+    output = create_image(_width, @strip_height, RGB)
+
+    len = strips.length
+    for i in (0...len)
+      output.set(i*@strip_width, 0, strips[len-i-1].image)
+    end
+
+    output
+  end
+
+
+  # def reassemble(strip, unordered)
+  #   return strip if unordered.empty?
+
+  #   for candidate in unordered.clone
+  #     strip.join_left(unordered.delete candidate) if strip.left_match(candidate)
+  #     strip.join_right(unordered.delete candidate) if strip.right_match(candidate)
+  #   end
+
+  #   reassemble(strip, unordered)
+  # end
 end
 
-def draw
-  # assembled = assemble(@strips)
-  # image(assembled, 0, 0)
-
-  strip = @strips[0].join_right(@strips[1])
-  strip = strip.join_left(@strips[2])
-
-  render = strip.image
-  image(render,50,0)
-end
-
-def load_strips(image)
-  nstrips = image.width / @strip_width
-  strips = []
-  for i in (0...nstrips)
-    strips << Strip.new(image.get(@strip_width * i, 0, @strip_width, image.height))
-  end
-  strips
-end
-
-# returns the assembled image
-def assemble(strips)
-  _width = strips.length * @strip_width
-  output = create_image(_width, @strip_height, RGB)
-
-  len = strips.length
-  for i in (0...len)
-    output.set(i*@strip_width, 0, strips[len-i-1].image)
-  end
-
-  output
-end
-
-
-# def reassemble(strip, unordered)
-#   return strip if unordered.empty?
-
-#   for candidate in unordered.clone
-#     strip.join_left(unordered.delete candidate) if strip.left_match(candidate)
-#     strip.join_right(unordered.delete candidate) if strip.right_match(candidate)
-#   end
-
-#   reassemble(strip, unordered)
-# end
-
-class Strip
-  attr_accessor :image
-
-  def self.join(left_strip, right_strip)
-    new_image = $app.create_image(left_strip.width+right_strip.width, left_strip.height, RGB)
-    new_image.copy(left_strip.image, 0, 0, left_strip.width, left_strip.height,
-                                     0, 0, left_strip.width, left_strip.height)
-
-
-    new_image.copy(right_strip.image, 0, 0, right_strip.width, right_strip.height,
-                                      left_strip.width, 0, right_strip.width, right_strip.height)
-    new_image
-  end
-
-  def initialize(image)
-    @image = image
-  end
-
-  def width
-    @image.width
-  end
-
-  def height
-    @image.height
-  end
-
-  def join_left(left_strip)
-    @image = Strip.join(left_strip, self)
-    return self
-  end
-
-  def join_right(right_strip)
-    @image = Strip.join(self, right_strip)
-    return self
-  end
-end
-
+UnshredApp.new :title => "Unshreddin"
