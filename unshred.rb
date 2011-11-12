@@ -18,10 +18,9 @@ class UnshredApp < Processing::App
     # assembled = assemble(@strips)
     # image(assembled, 0, 0)
 
-    strip = @strips[0].join_right(@strips[1])
-    strip = strip.join_left(@strips[2])
-
-    render = strip.image
+    Strip.print_edge(@strips[1].left_diff(@strips[0]))
+    
+    render = @strips[0].image
     image(render,50,0)
   end
 

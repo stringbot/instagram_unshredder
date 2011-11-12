@@ -1,0 +1,32 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+Strip	unshred_support.rb	/^  class Strip$/;"	c	class:UnshredSupport
+UnshredApp	unshred.rb	/^class UnshredApp < Processing::App$/;"	c
+UnshredSupport	unshred_support.rb	/^module UnshredSupport$/;"	m
+assemble	unshred.rb	/^  def assemble(strips)$/;"	f	class:UnshredApp
+average_color	unshred_support.rb	/^    def self.average_color(colors)$/;"	F	class:UnshredSupport.Strip
+color_diff	unshred_support.rb	/^    def self.color_diff(color1, color2)$/;"	F	class:UnshredSupport.Strip
+diff	unshred_support.rb	/^    def self.diff(edge1, edge2)$/;"	F	class:UnshredSupport.Strip
+draw	unshred.rb	/^  def draw$/;"	f	class:UnshredApp
+height	unshred_support.rb	/^    def height$/;"	f	class:UnshredSupport.Strip
+initialize	unshred_support.rb	/^    def initialize(image)$/;"	f	class:UnshredSupport.Strip
+join	unshred_support.rb	/^    def self.join(left_strip, right_strip)$/;"	F	class:UnshredSupport.Strip
+join_left	unshred_support.rb	/^    def join_left(left_strip)$/;"	f	class:UnshredSupport.Strip
+join_right	unshred_support.rb	/^    def join_right(right_strip)$/;"	f	class:UnshredSupport.Strip
+left_diff	unshred_support.rb	/^    def left_diff(other_strip)$/;"	f	class:UnshredSupport.Strip
+left_edge	unshred_support.rb	/^    def left_edge$/;"	f	class:UnshredSupport.Strip
+left_match	unshred_support.rb	/^    def left_match(left_strip)$/;"	f	class:UnshredSupport.Strip
+load_strips	unshred.rb	/^  def load_strips(image)$/;"	f	class:UnshredApp
+print_edge	unshred_support.rb	/^    def self.print_edge(edge)$/;"	F	class:UnshredSupport.Strip
+right_diff	unshred_support.rb	/^    def right_diff(other_strip)$/;"	f	class:UnshredSupport.Strip
+right_edge	unshred_support.rb	/^    def right_edge$/;"	f	class:UnshredSupport.Strip
+right_match	unshred_support.rb	/^    def right_match(right_strip)$/;"	f	class:UnshredSupport.Strip
+setup	unshred.rb	/^  def setup$/;"	f	class:UnshredApp
+subdivide	unshred_support.rb	/^    def self.subdivide(edge)$/;"	F	class:UnshredSupport.Strip
+unshred.rb	unshred.rb	1;"	F
+unshred_support.rb	unshred_support.rb	1;"	F
+width	unshred_support.rb	/^    def width$/;"	f	class:UnshredSupport.Strip
