@@ -1,4 +1,4 @@
-require 'strip'
+require 'unshred_support'
 
 class UnshredApp < Processing::App
   include UnshredSupport
