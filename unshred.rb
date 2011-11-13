@@ -18,8 +18,13 @@ class UnshredApp < Processing::App
     # assembled = assemble(@strips)
     # image(assembled, 0, 0)
 
-    Strip.print_edge(@strips[1].left_diff(@strips[0]))
-    
+    # Strip.print_edge(@strips[1].right_diff(@strips[2]))
+    # Strip.subdivide(@strips[0].right_edge)
+    v1 = PVector.new(255,255,255)
+    v2 = PVector.new(240,240,240)
+    v2.sub(v1)
+    puts "#{v2.x} #{v2.y} #{v2.z}"
+
     render = @strips[0].image
     image(render,50,0)
   end

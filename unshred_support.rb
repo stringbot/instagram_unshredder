@@ -102,8 +102,6 @@ module UnshredSupport
         average_color(w)
       end
 
-      puts "avg_win1: #{avg_win1.inspect} avg_win2: #{avg_win2.inspect}"
-
       #diff the averages
       avgs = []
       for i in (0...avg_win1.length)
@@ -148,10 +146,17 @@ module UnshredSupport
     def self.print_edge(edge)
       out = ""
       for i in edge
-        out << i.to_s
+        out << color_string(i)
         out << " "
       end
       puts out
+    end
+
+    def self.color_string(color)
+      r = (color >> 16) & 0xFF
+      g = (color >> 8)  & 0xFF
+      b =  color        & 0xFF
+      "|#{r} #{g} #{b}|"
     end
   end
 end
