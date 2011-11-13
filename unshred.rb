@@ -12,21 +12,12 @@ class UnshredApp < Processing::App
 
     @img = load_image("TokyoPanoramaShredded.png")
     @strips = load_strips(@img)
+    @i = 0
   end
 
   def draw
-    # assembled = assemble(@strips)
-    # image(assembled, 0, 0)
-
-    # Strip.print_edge(@strips[1].right_diff(@strips[2]))
-    # Strip.subdivide(@strips[0].right_edge)
-    v1 = PVector.new(255,255,255)
-    v2 = PVector.new(240,240,240)
-    v2.sub(v1)
-    puts "#{v2.x} #{v2.y} #{v2.z}"
-
-    render = @strips[0].image
-    image(render,50,0)
+    assembled = reassemble(@strips[0], @strips[1...@strips.length])
+    image(assembled.image, 0, 0)
   end
 
   def load_strips(image)
@@ -38,30 +29,23 @@ class UnshredApp < Processing::App
     strips
   end
 
-  # returns the assembled image
-  def assemble(strips)
-    _width = strips.length * @strip_width
-    output = create_image(_width, @strip_height, RGB)
+  def reassemble(strip, unordered)
+    return strip if unordered.empty?
 
-    len = strips.length
-    for i in (0...len)
-      output.set(i*@strip_width, 0, strips[len-i-1].image)
-    end
+    # find the best candidates for match
+    right_match = strip.best_right_match(unordered)
+    left_match  = strip.best_left_match(unordered)
 
-    output
+    # attach them
+    strip.join_right(right_match)
+    strip.join_left(left_match)
+
+    # remove the matches from the candidate pool
+    unordered.delete(right_match)
+    unordered.delete(left_match)
+
+    reassemble(strip, unordered)
   end
-
-
-  # def reassemble(strip, unordered)
-  #   return strip if unordered.empty?
-
-  #   for candidate in unordered.clone
-  #     strip.join_left(unordered.delete candidate) if strip.left_match(candidate)
-  #     strip.join_right(unordered.delete candidate) if strip.right_match(candidate)
-  #   end
-
-  #   reassemble(strip, unordered)
-  # end
 end
 
 UnshredApp.new :title => "Unshreddin"
