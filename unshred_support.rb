@@ -64,7 +64,6 @@ module UnshredSupport
           min_idx = idx
         end
       end
-
       strips[min_idx]
     end
 
@@ -119,7 +118,10 @@ module UnshredSupport
       left.each_with_index do |lcolor, idx|
         dists << color_distance(lcolor, right[idx])
       end
-      dists.inject(:+)
+
+      mean = dists.inject(:+) / dists.length
+      # stdev = Math::sqrt(dists.inject(0) {|sum,dist| sum + ((dist-mean)**2)} / dists.length)
+      mean
     end
   end
 end
