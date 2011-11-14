@@ -33,12 +33,12 @@ class UnshredApp < Processing::App
     return strip if unordered.empty?
 
     # find the best candidates for match
-    right_match = strip.best_right_match(unordered)
-    left_match  = strip.best_left_match(unordered)
+    right_match = strip.right_match(unordered)
+    left_match  = strip.left_match(unordered)
 
     # attach them
-    strip.join_right(right_match)
-    strip.join_left(left_match)
+    strip.join_right(right_match) if right_match
+    strip.join_left(left_match) if left_match
 
     # remove the matches from the candidate pool
     unordered.delete(right_match)

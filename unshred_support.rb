@@ -49,13 +49,14 @@ module UnshredSupport
       return self
     end
 
-    def best_left_match(strips)
+    def match(left, strips)
       min = MAX_INT
       min_idx = -1
-      ledge = self.left_edge
+      edge = left ? self.left_edge : self.right_edge
 
       strips.each_with_index do |strip, idx|
-        dist = Strip.edge_distance(ledge, strip.right_edge).floor
+        other = left ? strip.right_edge : strip.left_edge
+        dist = Strip.edge_distance(edge, other).floor
         next if dist == 0
 
         if dist < min
@@ -67,22 +68,13 @@ module UnshredSupport
       strips[min_idx]
     end
 
-    def best_right_match(strips)
-      min = MAX_INT
-      min_idx = -1
-      ledge = self.right_edge
 
-      strips.each_with_index do |strip, idx|
-        dist = Strip.edge_distance(ledge, strip.left_edge).floor
-        next if dist == 0
+    def left_match(strips)
+      match(true, strips)
+    end
 
-        if dist < min
-          min = dist
-          min_idx = idx
-        end
-      end
-
-      strips[min_idx]
+    def right_match(strips)
+      match(false, strips)
     end
 
 
@@ -128,29 +120,6 @@ module UnshredSupport
         dists << color_distance(lcolor, right[idx])
       end
       dists.inject(:+)
-    end
-
-    # print an edge's values to STDOUT
-    def self.print_edge(edge)
-      out = ""
-      for i in edge
-        out << color_string(i)
-        out << " "
-      end
-      puts out
-    end
-
-    def self.color_string(color)
-      r = (color >> 16) & 0xFF
-      g = (color >> 8)  & 0xFF
-      b =  color        & 0xFF
-      "|#{r} #{g} #{b}|"
-    end
-
-    def self.image_string(image)
-      w = image.width
-      h = image.height
-      "w:#{w} h:#{h}"
     end
   end
 end
