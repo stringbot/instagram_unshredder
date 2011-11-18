@@ -2,14 +2,29 @@ module UnshredSupport
 
   MAX_INT = (2**(0.size * 8 -2) -1)
 
+  class Match
+    attr_accessor :left, :right, :distance
+
+    def initialize(left, right, distance)
+      @left     = left
+      @right    = right
+      @distance = distance
+    end
+
+    def inspect
+      "left:%4s right:%4s distance:%6s" % [@left.index, @right.index, @distance]
+    end
+  end
+
   class Strip
-    attr_accessor :image
+    attr_accessor :image, :index
 
     # === Getters ===
 
     # initialize with a slice of the image
-    def initialize(image)
+    def initialize(image, index)
       @image = image
+      @index = index
     end
 
     # width of this slice
@@ -55,16 +70,23 @@ module UnshredSupport
       edge = left ? self.left_edge : self.right_edge
 
       strips.each_with_index do |strip, idx|
+        next if strip == self
         other = left ? strip.right_edge : strip.left_edge
         dist = Strip.edge_distance(edge, other).floor
-        next if dist == 0
 
         if dist < min
           min = dist
           min_idx = idx
         end
       end
-      strips[min_idx]
+
+      match_args = [self, strips[min_idx]]
+      if left # if we're doing a left match we want self on the right
+        match_args.reverse!
+      end
+
+      left, right = match_args
+      Match.new(left, right, min)
     end
 
 
@@ -119,9 +141,11 @@ module UnshredSupport
         dists << color_distance(lcolor, right[idx])
       end
 
-      mean = dists.inject(:+) / dists.length
+      # mean = dists.inject(:+) / dists.length
       # stdev = Math::sqrt(dists.inject(0) {|sum,dist| sum + ((dist-mean)**2)} / dists.length)
-      mean
+      # mean
+      dists.inject(:+)
     end
   end
+
 end
