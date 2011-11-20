@@ -14,8 +14,7 @@ class UnshredApp < Processing::App
     image  = load_image("TokyoPanoramaShredded.png")
     strips = load_strips(image).shuffle
 
-    matches = find_matches(strips)
-
+    matches = Match.find_matches(strips)
     reassembled_image = reassemble(matches)
     image(reassembled_image, 0, 0)
   end
@@ -29,49 +28,9 @@ class UnshredApp < Processing::App
     strips
   end
 
-
-  def find_matches(strips)
-    matches = {}
-    strips.each do |strip|
-      match = strip.left_match(strips)
-      if collision = matches[match.left]
-        matches[match.left] = resolve_collision(collision, match)
-      else
-        matches[match.left] = match
-      end
-    end
-    matches.values
-  end
-
-  # if the new distance is less than the old distance
-  # replace the match with the new match and the other
-  # match is the right_edge
-  def resolve_collision(new, old)
-    override = new.distance < old.distance
-    if override
-      return new
-    else
-      return old
-    end
-  end
-
   def reassemble(matches)
     left_side_index = find_left_side_index(matches)
     compile_image(nil, left_side_index, matches).image
-  end
-
-  def find_left_side_index(matches)
-    # we're finding the left edge by identifying the strip which appears
-    # as a left side of a match but doesn't appear as a right side
-    #
-    # mathy shortcut: n + (n-1) + (n-2) ... + (n-n) => (n + 1) * (n/2)
-    length = matches.length
-    allsum = (length + 1) * (length * 0.5)
-
-    # the sum of all the indices in the array minus the sum of
-    # all the right indices reveals the one left_side index
-    realsum = matches.inject(0) {|sum,m| sum + m.right.index}
-    left_side_index = (allsum - realsum).floor
   end
 
   def compile_image(strip, left_index, matches)
@@ -87,6 +46,19 @@ class UnshredApp < Processing::App
     compile_image(strip, next_left_index, matches)
   end
 
+  def find_left_side_index(matches)
+    # we're finding the left edge by identifying the strip which appears
+    # as a left side of a match but doesn't appear as a right side
+    #
+    # mathy shortcut: n + (n-1) + (n-2) ... + (n-n) => (n + 1) * (n/2)
+    length = matches.length
+    allsum = (length + 1) * (length * 0.5)
+
+    # the sum of all the indices in the array minus the sum of
+    # all the right indices reveals the one left_side index
+    realsum = matches.inject(0) {|sum,m| sum + m.right.index}
+    left_side_index = (allsum - realsum).floor
+  end
 end
 
 UnshredApp.new :title => "Unshreddin"

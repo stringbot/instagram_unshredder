@@ -14,6 +14,31 @@ module UnshredSupport
     def inspect
       "left:%4s right:%4s distance:%6s" % [@left.index, @right.index, @distance]
     end
+
+    def self.find_matches(strips)
+      matches = {}
+      strips.each do |strip|
+        match = strip.left_match(strips)
+        if collision = matches[match.left]
+          matches[match.left] = resolve_collision(collision, match)
+        else
+          matches[match.left] = match
+        end
+      end
+      matches.values
+    end
+
+    # if the new distance is less than the old distance
+    # replace the match with the new match and the other
+    # match is the right_edge
+    def self.resolve_collision(new, old)
+      override = new.distance < old.distance
+      if override
+        return new
+      else
+        return old
+      end
+    end
   end
 
   class Strip
