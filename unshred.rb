@@ -17,7 +17,7 @@ class UnshredApp < Processing::App
     matches = find_matches(strips)
 
     reassembled_image = reassemble(matches)
-    image(reassembled_image.image, 0, 0)
+    image(reassembled_image, 0, 0)
   end
 
   def load_strips(image)
@@ -56,6 +56,11 @@ class UnshredApp < Processing::App
   end
 
   def reassemble(matches)
+    left_side_index = find_left_side_index(matches)
+    compile_image(nil, left_side_index, matches).image
+  end
+
+  def find_left_side_index(matches)
     # we're finding the left edge by identifying the strip which appears
     # as a left side of a match but doesn't appear as a right side
     #
@@ -64,23 +69,22 @@ class UnshredApp < Processing::App
     allsum = (length + 1) * (length * 0.5)
 
     # the sum of all the indices in the array minus the sum of
-    # all the right indices reveals the one missing index
+    # all the right indices reveals the one left_side index
     realsum = matches.inject(0) {|sum,m| sum + m.right.index}
-    missing_index = (allsum - realsum).floor
-
-    left_match = matches.find {|m| m.left.index == missing_index }
-    reassemble2(left_match.left, left_match, matches)
+    left_side_index = (allsum - realsum).floor
   end
 
-  def reassemble2(strip, left_match, matches)
+  def compile_image(strip, left_index, matches)
+    left_match = matches.find {|m| m.left.index == left_index }
     return strip if left_match.nil?
 
+    strip ||= left_match.left
+
     right = left_match.right
-    next_left_index = right.index
     strip.join_right(right)
 
-    next_left = matches.find { |m| m.left.index == next_left_index }
-    reassemble2(strip, next_left, matches)
+    next_left_index = right.index
+    compile_image(strip, next_left_index, matches)
   end
 
 end
