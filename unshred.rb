@@ -12,12 +12,9 @@ class UnshredApp < Processing::App
 
   def draw
     image  = load_image("TokyoPanoramaShredded.png")
-    strips = load_strips(image)
-    matches = find_matches(strips)
+    strips = load_strips(image).shuffle
 
-    matches.each do |match|
-      puts match.inspect
-    end
+    matches = find_matches(strips)
 
     reassembled_image = reassemble(matches)
     image(reassembled_image.image, 0, 0)
@@ -39,8 +36,9 @@ class UnshredApp < Processing::App
       match = strip.left_match(strips)
       if collision = matches[match.left]
         matches[match.left] = resolve_collision(collision, match)
+      else
+        matches[match.left] = match
       end
-      matches[match.left] = match
     end
     matches.values
   end
@@ -70,23 +68,18 @@ class UnshredApp < Processing::App
     realsum = matches.inject(0) {|sum,m| sum + m.right.index}
     missing_index = (allsum - realsum).floor
 
-
     left_match = matches.find {|m| m.left.index == missing_index }
-    matches.delete left_match
-
     reassemble2(left_match.left, left_match, matches)
   end
 
   def reassemble2(strip, left_match, matches)
-    return strip if matches.empty?
+    return strip if left_match.nil?
 
     right = left_match.right
     next_left_index = right.index
     strip.join_right(right)
 
     next_left = matches.find { |m| m.left.index == next_left_index }
-    matches.delete next_left
-    puts "Next left index: %s" % next_left.left.index
     reassemble2(strip, next_left, matches)
   end
 
