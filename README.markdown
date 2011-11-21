@@ -11,9 +11,15 @@ Run It:
 ------
 
 ```
-$ ./bin/unshred TokyoPanoramaShredded.png 32
+$ ./bin/unshred inputs/TokyoPanoramaShredded.png 32
 
-$ ./bin/unshred big_sean_shredded.png 20
+$ ./bin/unshred inputs/big_sean_shredded.png 20
+
+$ ./bin/unshred inputs/lenna_shredded.png 32
+
+$ ./bin/unshred inputs/mona_lisa_shredded.png 32
+
+$ ./bin/unshred inputs/windowlicker_shredded.png 20
 ```
 
 [unshred]: http://instagram-engineering.tumblr.com/post/12651721845/instagram-engineering-challenge-the-unshredder
