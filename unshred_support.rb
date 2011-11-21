@@ -2,6 +2,8 @@ module UnshredSupport
 
   MAX_INT = (2**(0.size * 8 -2) -1)
 
+  # represents a match between two Strip edges. retains the distance for
+  # the match so false matches can be overridden by the real match
   class Match
     attr_accessor :left, :right, :distance
 
@@ -89,18 +91,23 @@ module UnshredSupport
       return self
     end
 
+    # finds the best match between this strip and a list of strips
+    # matches against our left edge if `left` is true, otherwise uses the right edge
     def match(left, strips)
-      min = MAX_INT
+      min     = MAX_INT
       min_idx = -1
-      edge = left ? self.left_edge : self.right_edge
+      edge    = left ? self.left_edge : self.right_edge
 
       strips.each_with_index do |strip, idx|
-        next if strip == self
-        other = left ? strip.right_edge : strip.left_edge
-        dist = Strip.edge_distance(edge, other).floor
+        next if strip == self # don't bother comparing to ourself
+
+        # figure out the corresponding edge and find the distance
+        # between them
+        other_edge = left ? strip.right_edge : strip.left_edge
+        dist       = Strip.edge_distance(edge, other_edge).floor
 
         if dist < min
-          min = dist
+          min     = dist
           min_idx = idx
         end
       end
@@ -148,7 +155,7 @@ module UnshredSupport
     def self.color_vector(color)
       red   = (color >> 16) & 0xFF
       green = (color >> 8) & 0xFF
-      blue  = color & 0xFF
+      blue  =  color & 0xFF
 
       PVector.new(red, green, blue)
     end
@@ -160,6 +167,7 @@ module UnshredSupport
       v1.dist(v2)
     end
 
+    # the sum of the distances between each pair of pixels
     def self.edge_distance(left, right)
       dists = []
       left.each_with_index do |lcolor, idx|
