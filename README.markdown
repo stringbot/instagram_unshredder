@@ -11,9 +11,9 @@ Run It:
 ------
 
 ```
-$ rp5 run unshred.rb TokyoPanoramaShredded.png 32
+$ ./bin/unshred TokyoPanoramaShredded.png 32
 
-$ rp5 run unshred.rb big_sean_shredded.png 20
+$ ./bin/unshred big_sean_shredded.png 20
 ```
 
 [unshred]: http://instagram-engineering.tumblr.com/post/12651721845/instagram-engineering-challenge-the-unshredder
