@@ -4,15 +4,26 @@ class UnshredApp < Processing::App
   include UnshredSupport
 
   def setup
-    size(640,359)
+    @image_file  = ARGV[0]
+    @strip_width = ARGV[1].to_i
+
+    puts "Unshredding #{@image_file} with strip width #{@strip_width}"
+
+    if (@image_file)
+      @image  = load_image(@image_file)
+      @width  = @image.width
+      @height = @image.height
+    else
+      raise "Please specify image filename"
+    end
+
+    puts "setup #{@height} #{@width}"
+    size(@width,@height)
     no_loop
-    @strip_width = 32
-    @strip_height = 359
   end
 
   def draw
-    image  = load_image("TokyoPanoramaShredded.png")
-    strips = load_strips(image).shuffle
+    strips = load_strips(@image).shuffle
 
     matches = Match.find_matches(strips)
     reassembled_image = reassemble(matches)
@@ -61,4 +72,7 @@ class UnshredApp < Processing::App
   end
 end
 
-UnshredApp.new :title => "Unshreddin"
+image       = ARGV[0]
+strip_width = ARGV[1]
+
+UnshredApp.new :title => "Unshreddin", :image => image, :strip_width => strip_width
